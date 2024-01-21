@@ -30,7 +30,7 @@ app.get('/items', (req, res) => {
 app.get('/items/:id', (req, res) => {
   // Etsi objekti, jonka id vastaa pyydettyä
   const requestedId = parseInt(req.params.id);
-  const item = items.find((item) => item.id === requestedId);
+  let item = items.find((item) => item.id === requestedId);
 
   if (!item) {
     // Jos objektia ei löydy, palauta virhekoodi 404 Not Found
