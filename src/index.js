@@ -1,4 +1,3 @@
-// Main JS file
 import express from 'express';
 import path from 'path';
 import {fileURLToPath} from 'url';
@@ -31,11 +30,11 @@ app.get('/items', (req, res) => {
 app.get('/items/:id', (req, res) => {
   // Etsi objekti, jonka id vastaa pyydettyä
   const requestedId = parseInt(req.params.id);
-  const item = items.find(item => item.id === requestedId);
+  const item = items.find((item) => item.id === requestedId);
 
   if (!item) {
     // Jos objektia ei löydy, palauta virhekoodi 404 Not Found
-    return res.status(404).json({ message: 'Item not found' });
+    return res.status(404).json({message: 'Item not found'});
   }
 
   // Palauta löydetty objekti
