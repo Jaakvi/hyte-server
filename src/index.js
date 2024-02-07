@@ -1,8 +1,8 @@
 import express from 'express';
 import path from 'path';
 import {fileURLToPath} from 'url';
-import {deleteItem, getItemById, getItems, postItem, putItem} from './item.mjs';
-import {getUserById, getUsers, postUser, postLogin, putUser} from './users.mjs';
+import itemRouter from './routes/item-router.mjs';
+import userRouter from './routes/user-router.mjs';
 const hostname = '127.0.0.1';
 const port = 3000;
 const app = express();
@@ -16,34 +16,10 @@ const __dirname = path.dirname(__filename);
 app.use('/sivusto', express.static(path.join(__dirname, '../public')));
 
 // RESOURCE /item endpoints
-// GET http://127.0.0.1:3000/items
-app.get('/items', getItems);
-
-// GET http://127.0.0.1:3000/items/<ID>
-app.get('/items/:id', getItemById);
-
-// Itemin lisäys
-// POST http://127.0.0.1:3000/items/
-app.post('/items', postItem);
-
-//PUT
-app.put('/items/:id', putItem);
-
-//DELETE
-app.delete('/item/:id', deleteItem);
+app.use('/items', itemRouter);
 
 // Users resource
-// list users
-app.get('/users', getUsers);
-// get info of a user
-app.get('/users/:id', getUserById);
-// user registration
-app.post('/users', postUser);
-// user login
-app.post('/users/login', postLogin);
-// update user
-app.put('/users/:id', putUser);
-
+app.use('/users', userRouter);
 // GET http://127.0.0.1:3000
 // ei toimi tällä hetkellä, koska public-server tarjoilee index.html:n ensin
 app.get('/', (req, res) => {
