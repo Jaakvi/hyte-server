@@ -5,6 +5,7 @@ import {
   postUser,
   postLogin,
   putUser,
+  deleteUser,
 } from '../controllers/user-controller.mjs';
 
 const userRouter = Express.Router();
@@ -19,5 +20,7 @@ userRouter.post('/', postUser);
 userRouter.post('/login', postLogin);
 // update user
 userRouter.put('/:id', putUser);
+
+userRouter.delete('/:id', deleteUser)
 
 export default userRouter;

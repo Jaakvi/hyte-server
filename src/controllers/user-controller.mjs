@@ -1,64 +1,67 @@
-const users = [
-  {
-    id: 1,
-    username: 'johndoe',
-    password: 'password1',
-    email: 'johndoe@example.com',
-  },
-  {
-    id: 2,
-    username: 'janedoe',
-    password: 'password2',
-    email: 'janedoe@example.com',
-  },
-  {
-    id: 3,
-    username: 'bobsmith',
-    password: 'password3',
-    email: 'bobsmith@example.com',
-  },
-];
+import {
+  deleteUserById,
+  insertUser,
+  listAllUsers,
+  selectUserByID,
+  updateUserById,
+} from '../models/user-model.mjs';
 
 // TODO: implement route handlers below for users
 
-const getUsers = (req, res) => {
-  res.json(users);
+const getUsers = async (req, res) => {
+  const result = await listAllUsers();
+  if (result.error) {
+    return res.status(result.error).json(result);
+  }
+  return res.json(result);
 };
 
 // Get user by ID
-const getUserById = (req, res) => {
-  const userId = parseInt(req.params.id);
-  const user = users.find((user) => user.id === userId);
-
-  if (!user) {
-    return res.status(404).send('User not found');
+const getUserById = async (req, res) => {
+  const result = await selectUserByID(req.params.id);
+  if (result.error) {
+    return res.status(result.error).json(result);
   }
-
-  res.json(user);
+  return res.json(result);
 };
 
 // Create a new user
-const postUser = (req, res) => {
-  const {name, email} = req.body;
-  const newUser = {id: users.length + 1, name, email};
-  users.push(newUser);
-  res.status(201).json(newUser);
+const postUser = async (req, res) => {
+  const {username, password, email} = req.body;
+  // check that all needed fields are included in request
+  if (username && password && email) {
+    const result = await insertUser(req.body);
+    if (result.error) {
+      return res.status(result.error).json(result);
+    }
+    return res.status(201).json(result);
+  } else {
+    return res.status(400).json({error: 400, message: 'bad request'});
+  }
 };
 
 // Update an existing user
-const putUser = (req, res) => {
-  const userId = parseInt(req.params.id);
-  const {name, email} = req.body;
-  const userIndex = users.findIndex((user) => user.id === userId);
-
-  if (userIndex === -1) {
-    return res.status(404).send('User not found');
+const putUser = async (req, res) => {
+  const user_id = req.params.id;
+  const {username, password, email} = req.body;
+  // check that all needed fields are included in request
+  if (user_id && username && password && email) {
+    const result = await updateUserById({user_id, ...req.body});
+    if (result.error) {
+      return res.status(result.error).json(result);
+    }
+    return res.status(201).json(result);
+  } else {
+    return res.status(400).json({error: 400, message: 'bad request'});
   }
+};
 
-  const updatedUser = {id: userId, name, email};
-  users[userIndex] = updatedUser;
-
-  res.json(updatedUser);
+const deleteUser = async (req, res) => {
+  const result = await deleteUserById(req.params.id);
+  if (result.error) {
+    return res.status(result.error).json(result);
+  }
+  return res.json(result);
 };
 
 // Dummy login, returns user object if username & password match
@@ -80,4 +83,4 @@ const postLogin = (req, res) => {
   }
 };
 
-export {getUsers, getUserById, postUser, putUser, postLogin};
+export {getUsers, getUserById, postUser, putUser, postLogin, deleteUser};
