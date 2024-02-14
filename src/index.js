@@ -4,10 +4,12 @@ import {fileURLToPath} from 'url';
 import itemRouter from './routes/item-router.mjs';
 import userRouter from './routes/user-router.mjs';
 import entryRouter from './routes/entry-router.mjs';
+import cors from 'cors';
 const hostname = '127.0.0.1';
 const port = 3000;
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 // Staattinen sivusto palvelimen juureen (public-kansion sisältö näkyy osoitteessa http://127.0.0.1:3000/sivu.html)
 app.use(express.static('public'));
@@ -21,7 +23,7 @@ app.use('/sivusto', express.static(path.join(__dirname, '../public')));
 app.use('/items', itemRouter);
 
 // Users resource
-app.use('/users', userRouter);
+app.use('/api/users', userRouter);
 
 app.use('/api/entries', entryRouter);
 // GET http://127.0.0.1:3000

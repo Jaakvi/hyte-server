@@ -2,7 +2,7 @@ import {
   listAllEntries,
   findEntryById,
   addEntry,
-  deleteEntryById
+  deleteEntryById,
 } from '../models/entry-model.mjs';
 
 const getEntries = async (req, res) => {
