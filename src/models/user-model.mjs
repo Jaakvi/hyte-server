@@ -81,6 +81,22 @@ const deleteUserById = async (id) => {
     return {error: 500, message: 'db error'};
   }
 };
+const selectUserByUserame = async (username) => {
+  try {
+    const sql = 'SELECT * FROM Users WHERE username=?';
+    const params = [username];
+    const [rows] = await promisePool.query(sql, params);
+    //console.log(rows);
+    // if nothing is found with the username and password, login attempt has failed
+    if (rows.length === 0) {
+      return {error: 401, message: 'invalid username or password'};
+    }
+    return rows[0];
+  } catch (error) {
+    console.error('selectUserByUsername', error);
+    return {error: 500, message: 'db error'};
+  }
+};
 
 export {
   listAllUsers,
@@ -88,4 +104,5 @@ export {
   insertUser,
   updateUserById,
   deleteUserById,
+  selectUserByUserame,
 };

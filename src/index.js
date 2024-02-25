@@ -5,11 +5,16 @@ import itemRouter from './routes/item-router.mjs';
 import userRouter from './routes/user-router.mjs';
 import entryRouter from './routes/entry-router.mjs';
 import cors from 'cors';
+import logger from './middlewares/logger.mjs';
+import authRouter from './routes/auth-router.mjs';
 const hostname = '127.0.0.1';
 const port = 3000;
 const app = express();
 
 app.use(cors());
+// logger middleware
+app.use(logger);
+
 app.use(express.json());
 // Staattinen sivusto palvelimen juureen (public-kansion sisältö näkyy osoitteessa http://127.0.0.1:3000/sivu.html)
 app.use(express.static('public'));
@@ -26,6 +31,10 @@ app.use('/items', itemRouter);
 app.use('/api/users', userRouter);
 
 app.use('/api/entries', entryRouter);
+
+// User authentication
+app.use('/api/auth', authRouter);
+
 // GET http://127.0.0.1:3000
 // ei toimi tällä hetkellä, koska public-server tarjoilee index.html:n ensin
 app.get('/', (req, res) => {

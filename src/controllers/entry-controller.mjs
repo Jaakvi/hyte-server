@@ -3,15 +3,27 @@ import {
   findEntryById,
   addEntry,
   deleteEntryById,
+  listAllEntriesByUserId,
 } from '../models/entry-model.mjs';
 
 const getEntries = async (req, res) => {
-  const result = await listAllEntries();
-  if (!result.error) {
+  try {
+    // Varmistetaan, että käyttäjä on todennettu
+    if (!req.user) {
+      return res.status(401).json({virhe: 'Unauthorized'});
+    }
+
+    // Haetaan käyttäjän tunnus tokenista
+    const userId = req.user.user_id;
+
+    // Haetaan kirjaukset kirjautuneelle käyttäjälle
+    const result = await listAllEntriesByUserId(userId);
+
+    // Jos kyselyssä ei tapahtunut virheitä, lähetetään vastaus kirjauksista
     res.json(result);
-  } else {
-    res.status(500);
-    res.json(result);
+  } catch (error) {
+    // Jos virhe tapahtuu hakuprosessin aikana.
+    res.status(500).json({virhe: 'Server error'});
   }
 };
 
@@ -66,6 +78,11 @@ const deleteEntry = async (req, res) => {
     const existingEntry = await findEntryById(entry_id);
     if (!existingEntry) {
       return res.sendStatus(404);
+    }
+
+    // Check if the logged-in user is the owner of the entry
+    if (existingEntry.owner_id !== req.user.user_id) {
+      return res.status(403).json({error: 'Unauthorized'});
     }
 
     // Delete entry from the database
