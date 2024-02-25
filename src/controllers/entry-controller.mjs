@@ -28,11 +28,17 @@ const getEntries = async (req, res) => {
 };
 
 const getEntryById = async (req, res) => {
+  // Authentication: Check if user is authenticated
+  if (!req.user) {
+    return res.sendStatus(401); // Unauthorized
+  }
+
+  // Retrieve entry by id
   const entry = await findEntryById(req.params.id);
   if (entry) {
     res.json(entry);
   } else {
-    res.sendStatus(404);
+    res.sendStatus(404); // Not Found
   }
 };
 
