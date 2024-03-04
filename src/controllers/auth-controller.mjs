@@ -1,11 +1,11 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import {selectUserByUserame} from '../models/user-model.mjs';
 import 'dotenv/config';
+import {selectUserByUsername} from '../models/user-model.mjs';
 
 const postLogin = async (req, res) => {
   const {username, password} = req.body;
-  const user = await selectUserByUserame(username);
+  const user = await selectUserByUsername(username);
   if (user.error) {
     return res.status(user.error).json(user);
   }

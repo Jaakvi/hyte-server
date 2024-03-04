@@ -1,3 +1,4 @@
+import {validationResult} from 'express-validator';
 import {
   listAllEntries,
   findEntryById,
@@ -42,19 +43,27 @@ const getEntryById = async (req, res) => {
   }
 };
 
-const postEntry = async (req, res) => {
-  const {user_id, entry_date, mood, weight, sleep_hours, notes} = req.body;
-  if (entry_date && (weight || mood || sleep_hours || notes) && user_id) {
+const postEntry = async (req, res, next) => {
+  try {
+    const {user_id, entry_date, mood, weight, sleep_hours, notes} = req.body;
+
+    const validationErrors = validationResult(req);
+    if (!validationErrors.isEmpty())
+      throw {
+        status: 400,
+        message: 'Validation failed',
+        errors: validationErrors.array(),
+      };
+
+    if (!(entry_date && (weight || mood || sleep_hours || notes) && user_id))
+      throw {status: 400, message: 'Bad request'};
+
     const result = await addEntry(req.body);
-    if (result.entry_id) {
-      res.status(201);
-      res.json({message: 'New entry added.', ...result});
-    } else {
-      res.status(500);
-      res.json(result);
-    }
-  } else {
-    res.sendStatus(400);
+    if (!result.entry_id) throw {status: 500, message: 'Error adding entry'};
+
+    res.status(201).json({message: 'New entry added.', ...result});
+  } catch (error) {
+    next({status: error.status || 500, message: error.message});
   }
 };
 
