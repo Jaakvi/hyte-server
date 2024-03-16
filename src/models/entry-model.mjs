@@ -1,5 +1,3 @@
-// Note: db functions are async and must be called with await from the controller
-// How to handle errors in controller?
 import promisePool from '../utils/database.mjs';
 
 const listAllEntries = async () => {
@@ -26,13 +24,13 @@ const listAllEntriesByUserId = async (id) => {
   }
 };
 
-const findEntryById = async (id) => {
+const findEntryById = async (id, userId) => {
   try {
     const [rows] = await promisePool.query(
-      'SELECT * FROM DiaryEntries WHERE entry_id = ?',
-      [id]
+      'SELECT * FROM DiaryEntries WHERE entry_id = ? AND user_id = ?',
+      [id, userId]
     );
-    console.log('rows', rows);
+    // console.log('rows', rows);
     return rows[0];
   } catch (e) {
     console.error('error', e.message);
@@ -40,30 +38,65 @@ const findEntryById = async (id) => {
   }
 };
 
-const addEntry = async (entry) => {
-  const {user_id, entry_date, mood, weight, sleep_hours, notes} = entry;
-  const sql = `INSERT INTO DiaryEntries (user_id, entry_date, mood, weight, sleep_hours, notes)
+const addEntry = async (entry, userId) => {
+  const sql = `INSERT INTO DiaryEntries
+               (user_id, entry_date, mood, weight, sleep_hours, notes)
                VALUES (?, ?, ?, ?, ?, ?)`;
-  const params = [user_id, entry_date, mood, weight, sleep_hours, notes];
+  const params = [
+    userId,
+    entry.entry_date,
+    entry.mood,
+    entry.weight,
+    entry.sleep_hours,
+    entry.notes,
+  ];
   try {
     const rows = await promisePool.query(sql, params);
-    console.log('rows', rows);
+    // console.log('rows', rows);
     return {entry_id: rows[0].insertId};
   } catch (e) {
     console.error('error', e.message);
-    return next(new Error(e));
+    return {error: e.message};
   }
 };
 
-const deleteEntryById = async (id) => {
+const updateEntryById = async (entryId, userId, entryData) => {
   try {
-    const sql = 'DELETE FROM DiaryEntries WHERE entry_id = ?';
-    const [result] = await promisePool.query(sql, [id]);
-    console.log('Deleted rows:', result.affectedRows);
+    const params = [entryData, entryId, userId];
+    // format() function is used to include only the fields that exists
+    // in the entryData object to the SQL query
+    const sql = promisePool.format(
+      `UPDATE DiaryEntries SET ?
+       WHERE entry_id=? AND user_id=?`,
+      params
+    );
+    const [result] = await promisePool.query(sql, params);
+    // console.log(result);
+    if (result.affectedRows === 0) {
+      return {error: 404, message: 'Entry not found'};
+    }
+    return {message: 'Entry data updated', entry_id: entryId};
+  } catch (error) {
+    // fix error handling
+    // now duplicate entry error is generic 500 error, should be fixed to 400 ?
+    console.error('updateEntryById', error);
+    return {error: 500, message: 'db error'};
+  }
+};
+
+const deleteEntryById = async (id, userId) => {
+  try {
+    const sql = 'DELETE FROM DiaryEntries WHERE entry_id=? AND user_id=?';
+    const params = [id, userId];
+    const [result] = await promisePool.query(sql, params);
+    // console.log(result);
+    if (result.affectedRows === 0) {
+      return {error: 404, message: 'Entry not found'};
+    }
     return {message: 'Entry deleted', entry_id: id};
-  } catch (e) {
-    console.error('Error:', e.message);
-    return {error: e.message};
+  } catch (error) {
+    console.error('deleteEntryById', error);
+    return {error: 500, message: 'db error'};
   }
 };
 
@@ -72,5 +105,6 @@ export {
   listAllEntriesByUserId,
   findEntryById,
   addEntry,
+  updateEntryById,
   deleteEntryById,
 };

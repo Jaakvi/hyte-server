@@ -1,112 +1,59 @@
-import {validationResult} from 'express-validator';
+import {customError} from '../middlewares/error-handler.mjs';
 import {
-  listAllEntries,
   findEntryById,
   addEntry,
   deleteEntryById,
+  updateEntryById,
   listAllEntriesByUserId,
 } from '../models/entry-model.mjs';
 
-const getEntries = async (req, res) => {
-  try {
-    // Varmistetaan, että käyttäjä on todennettu
-    if (!req.user) {
-      return res.status(401).json({virhe: 'Unauthorized'});
-    }
-
-    // Haetaan käyttäjän tunnus tokenista
-    const userId = req.user.user_id;
-
-    // Haetaan kirjaukset kirjautuneelle käyttäjälle
-    const result = await listAllEntriesByUserId(userId);
-
-    // Jos kyselyssä ei tapahtunut virheitä, lähetetään vastaus kirjauksista
+const getEntries = async (req, res, next) => {
+  // return only logged in user's own entries
+  // - get user's id from token (req.user.user_id)
+  const result = await listAllEntriesByUserId(req.user.user_id);
+  if (!result.error) {
     res.json(result);
-  } catch (error) {
-    // Jos virhe tapahtuu hakuprosessin aikana.
-    res.status(500).json({virhe: 'Server error'});
+  } else {
+    next(new Error(result.error));
   }
 };
 
-const getEntryById = async (req, res) => {
-  // Authentication: Check if user is authenticated
-  if (!req.user) {
-    return res.sendStatus(401); // Unauthorized
-  }
-
-  // Retrieve entry by id
-  const entry = await findEntryById(req.params.id);
+const getEntryById = async (req, res, next) => {
+  const entry = await findEntryById(req.params.id, req.user.user_id);
   if (entry) {
     res.json(entry);
   } else {
-    res.sendStatus(404); // Not Found
+    next(customError('Entry not found', 404));
   }
 };
 
 const postEntry = async (req, res, next) => {
-  try {
-    const {user_id, entry_date, mood, weight, sleep_hours, notes} = req.body;
-
-    const validationErrors = validationResult(req);
-    if (!validationErrors.isEmpty())
-      throw {
-        status: 400,
-        message: 'Validation failed',
-        errors: validationErrors.array(),
-      };
-
-    if (!(entry_date && (weight || mood || sleep_hours || notes) && user_id))
-      throw {status: 400, message: 'Bad request'};
-
-    const result = await addEntry(req.body);
-    if (!result.entry_id) throw {status: 500, message: 'Error adding entry'};
-
-    res.status(201).json({message: 'New entry added.', ...result});
-  } catch (error) {
-    next({status: error.status || 500, message: error.message});
+  const userId = req.user.user_id;
+  const result = await addEntry(req.body, userId);
+  if (result.entry_id) {
+    res.status(201);
+    res.json({message: 'New entry added.', ...result});
+  } else {
+    next(new Error(result.error));
   }
 };
 
-const putEntry = async (req, res) => {
-  const {entry_id} = req.params;
-  const {user_id, entry_date, mood, weight, sleep_hours, notes} = req.body;
-
-  try {
-    // Check if entry exists
-    const existingEntry = await findEntryById(entry_id);
-    if (!existingEntry) {
-      return res.sendStatus(404);
-    }
-    const result = await updateEntry(existingEntry);
-    res.json({message: 'Entry updated successfully.', result});
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({error: 'Internal server error.'});
+const putEntry = async (req, res, next) => {
+  const entryId = req.params.id;
+  const userId = req.user.user_id;
+  const result = await updateEntryById(entryId, userId, req.body);
+  if (result.error) {
+    return next(customError(result.message, result.error));
   }
+  return res.status(201).json(result);
 };
 
-const deleteEntry = async (req, res) => {
-  const {entry_id} = req.params;
-
-  try {
-    // Check if entry exists
-    const existingEntry = await findEntryById(entry_id);
-    if (!existingEntry) {
-      return res.sendStatus(404);
-    }
-
-    // Check if the logged-in user is the owner of the entry
-    if (existingEntry.owner_id !== req.user.user_id) {
-      return res.status(403).json({error: 'Unauthorized'});
-    }
-
-    // Delete entry from the database
-    const result = await deleteEntryById(entry_id);
-    res.json({message: 'Entry deleted successfully.', result});
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({error: 'Internal server error.'});
+const deleteEntry = async (req, res, next) => {
+  const result = await deleteEntryById(req.params.id, req.user.user_id);
+  if (result.error) {
+    return next(customError(result.message, result.error));
   }
+  return res.json(result);
 };
 
 export {getEntries, getEntryById, postEntry, putEntry, deleteEntry};
