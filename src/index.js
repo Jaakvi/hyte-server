@@ -32,7 +32,7 @@ app.use(express.static('public'));
 // Tarjoiltava kansio määritellään relatiivisella polulla (tässä käytössä sama kansio kuin yllä).
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-app.use('/sivusto', express.static(path.join(__dirname, '../public')));
+app.use('/sivusto', express.static(path.join(__dirname, '../public/dist')));
 
 // Test RESOURCE /items endpoints (just mock data for testing, not connected to any database)
 app.use('/items', itemRouter);
