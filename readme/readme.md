@@ -87,17 +87,17 @@ DELETE https://hyte-servu.northeurope.cloudapp.azure.com/api/entries" + id
 
 <h3><b>Frontend UI<b></h3>
 
-![Front page](frontend_Ui.jpeg)
+![Front page](frontend_Ui.jpeg) <br>
 
-![Login page](login.jpeg)
+![Login page](login.jpeg) <br>
 
-![Registeration page](register.jpeg)
+![Registeration page](register.jpeg) <br>
 
-![Profile Page](home.jpeg)
+![Profile Page](home.jpeg) <br>
 
-![Pofile Page](user_info.jpeg)
+![Pofile Page](user_info.jpeg) <br>
 
-![Profile Page](about_us.jpeg)
+![Profile Page](about_us.jpeg) <br>
 
 <h3><b>Known bugs:<b></h3>
 
