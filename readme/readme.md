@@ -46,9 +46,9 @@ example queries
   content-type: application/json
 
   {
-    "username": "johndoe4",
-    "password": "hashed_password4",
-    "email": "email@email.com"
+    "username": "testikayttaja",
+    "password": "12345678",
+    "email": "testi@email.com"
   }
 
 ```
@@ -76,10 +76,6 @@ content-type: application/json
   "notes": "This was a good day"
 
 }
-
-# Update entry
-PUT https://hyte-server-aura.northeurope.cloudapp.azure.com/entries/:id
-content-type: application/json
 
 # Delete entry
 DELETE https://hyte-servu.northeurope.cloudapp.azure.com/api/entries" + id
