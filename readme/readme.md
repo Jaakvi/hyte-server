@@ -1,16 +1,17 @@
 # hyte-server back-end server
+
 Node.Js + Express
 
 Start dev server: `npm run dev`
+
 <h3><b>Usage<b></h3>
 
 1. Clone/download code.
-2. Run ```npm i``` inside the project folder
+2. Run `npm i` inside the project folder
 3. Install & start Mysql/MariaDB server
-4. Import database script in ```db/``` folder
+4. Import database script in `db/` folder
 5. Create .env file based on .env.sample
 6. Start the dev server: npm run dev/npm run start
-
 
 <h3><b>/api/auth<b></h3>
 example queries
@@ -30,6 +31,7 @@ example queries
   Authorization: Bearer <token>
 
 ```
+
 <h3><b>/api/users<b></h3>
 
 example queries
@@ -69,10 +71,10 @@ example queries
   }
 ```
 
-
 <h3><b>/api/entries<b></h3>
 
 example queries
+
 ```
 # Get all entries for a logged in user (requires token)
 GET https://hyte-server-aura.northeurope.cloudapp.azure.com/api/entries
@@ -111,15 +113,14 @@ content-type: application/json
 }
 
 # Delete entry
-DELETE https://hyte-server-aura.northeurope.cloudapp.azure.coma/api/entries/:id
+DELETE https://hyte-servu.northeurope.cloudapp.azure.com/api/entries" + id
 ```
+
 <h3><b>Database structure<b></h3>
 
 ![Database structure](database.png)
 
-
 <h3><b>Frontend UI<b></h3>
-
 
 ![Front page](frontend_Ui.jpeg)
 
@@ -133,16 +134,10 @@ DELETE https://hyte-server-aura.northeurope.cloudapp.azure.coma/api/entries/:id
 
 ![Profile Page](about_us.jpeg)
 
-
 <h3><b>Known bugs:<b></h3>
-
 
 1. Delete user function not yet working from the page, will be fixed as soon as possible.
 
 Please report any other odd behavior on the page, I will try to patch them as well as I can.
 
 <h3><b>Refrences:<b></h3>
-
-
-
-
