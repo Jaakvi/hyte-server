@@ -105,6 +105,8 @@ DELETE https://hyte-servu.northeurope.cloudapp.azure.com/api/entries" + id
 
 1. Delete entrry function not yet working from the page, will be fixed as soon as possible.
 
+2. Empty format function not yet workin from the page, will be fixed as soon as possible
+
 Please report any other odd behavior on the page, I will try to patch them as well as I can.
 
 <h3><b>Refrences:<b></h3>
