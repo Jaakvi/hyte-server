@@ -19,7 +19,7 @@ example queries
 ```
 
   # Login
-  POST https://hyte-server-aura.northeurope.cloudapp.azure.com/api/users/login
+  POST https://hyte-servu.northeurope.cloudapp.azure.com/api/users/login
   content-type: application/json
   {
     "username": "johnDoe4",
@@ -27,7 +27,7 @@ example queries
   }
 
   ## Get user by token (requires token)
-  GET https://hyte-server-aura.northeurope.cloudapp.azure.com/api/auth/me
+  GET https://hyte-servu.northeurope.cloudapp.azure.com/api/auth/me
   Authorization: Bearer <token>
 
 ```
@@ -37,20 +37,12 @@ example queries
 example queries
 
 ```
-  # Get all users (requires token)
-  GET https://hyte-server-aura.northeurope.cloudapp.azure.com/api/users
-  Authorization: Bearer <token>
-
   # Get user by id (requires token)
-  GET https://hyte-server-aura.northeurope.cloudapp.azure.com/api/users/:id
-  Authorization: Bearer <token>
-
-  # Delete user (requires token)
-  DELETE https://hyte-server-aura.northeurope.cloudapp.azure.com/api/users/:id
+  GET https://hyte-servu.northeurope.cloudapp.azure.com/api/users/:id
   Authorization: Bearer <token>
 
   # Create user (register)
-  POST https://hyte-server-aura.northeurope.cloudapp.azure.com/api/users
+  POST https://hyte-servu.northeurope.cloudapp.azure.com/api/users
   content-type: application/json
 
   {
@@ -59,16 +51,6 @@ example queries
     "email": "email@email.com"
   }
 
-  # Update user's own data (requires token)
-  PUT https://hyte-server-aura.northeurope.cloudapp.azure.com/api/users/
-  Authorization: Bearer <token>
-  content-type: application/json
-
-  {
-    "username": "johndoe4",
-    "password": "hashed_password4",
-    "email": "email@email.com"
-  }
 ```
 
 <h3><b>/api/entries<b></h3>
@@ -76,15 +58,12 @@ example queries
 example queries
 
 ```
-# Get all entries for a logged in user (requires token)
-GET https://hyte-server-aura.northeurope.cloudapp.azure.com/api/entries
-Authorization: Bearer <token>
 
 # Get entries by id
-GET https://hyte-server-aura.northeurope.cloudapp.azure.com/api/entries/:id
+GET https://hyte-servu.northeurope.cloudapp.azure.com/api/entries/:id
 
 # Post entry
-POST https://hyte-server-aura.northeurope.cloudapp.azure.com/api/entries
+https://hyte-servu.northeurope.cloudapp.azure.com/api/entries
 content-type: application/json
 
 
@@ -102,23 +81,13 @@ content-type: application/json
 PUT https://hyte-server-aura.northeurope.cloudapp.azure.com/entries/:id
 content-type: application/json
 
-{
-  "user_id": 9,
-  "entry_date": "2024-17-03",
-  "mood": "Happy",
-  "weight": 80.2,
-  "sleep_hours": 9,
-  "notes": "This was a ok day, sleep was good though",
-
-}
-
 # Delete entry
 DELETE https://hyte-servu.northeurope.cloudapp.azure.com/api/entries" + id
 ```
 
 <h3><b>Database structure<b></h3>
 
-![Database structure](database.png)
+![Database structure](sql_taulukko.png)
 
 <h3><b>Frontend UI<b></h3>
 
@@ -136,7 +105,7 @@ DELETE https://hyte-servu.northeurope.cloudapp.azure.com/api/entries" + id
 
 <h3><b>Known bugs:<b></h3>
 
-1. Delete user function not yet working from the page, will be fixed as soon as possible.
+1. Delete entrry function not yet working from the page, will be fixed as soon as possible.
 
 Please report any other odd behavior on the page, I will try to patch them as well as I can.
 
