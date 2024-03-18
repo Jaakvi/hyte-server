@@ -81,6 +81,8 @@ content-type: application/json
 DELETE https://hyte-servu.northeurope.cloudapp.azure.com/api/entries" + id
 ```
 
+<h3><b>Linkki julkaistuun sovellukseen front end: </b><br> https://github.com/Jaakvi/projekti</h3>
+
 <h3><b>Database structure<b></h3>
 
 ![Database structure](sql_taulukko.png)
